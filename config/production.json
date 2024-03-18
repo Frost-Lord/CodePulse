@@ -1,0 +1,9 @@
+{
+    "environment": "production",
+    "server": {
+        "port": 8080
+    },
+    "logger": {
+        "level": "info"
+    }
+}
