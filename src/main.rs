@@ -19,7 +19,8 @@ async fn main() {
     println!("{}[CodePulse]{} Checking for updates...", colors.bold, colors.endc);
 
     for project in projects {
-        match client.get(&project.github_url).send().await {
+        const BASE_URL: &str = "https://api.github.com/repos/";
+        match client.get(BASE_URL.to_owned() + &project.github_url).send().await {
             Ok(resp) => {
                 if resp.status().is_success() {
                     match resp.json::<Value>().await {

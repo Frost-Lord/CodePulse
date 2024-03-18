@@ -9,3 +9,8 @@ CodePulse is a dynamic, Rust-based tool designed to streamline the process of ke
 - **Customizable Notifications**: Get notified about changes in your repositories with customizable alerts, tailored to fit your workflow.
 - **Efficiency at Scale**: Designed to handle numerous repositories efficiently, making it suitable for individual developers and large teams alike.
 - **Secure**: Implements best practices for authentication and secure communication with GitHub's API, safeguarding your code and credentials.
+
+# Run the code:
+```bash
+cargo build --release && cargo run --release
+```
