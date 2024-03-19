@@ -4,8 +4,18 @@ use chrono::{DateTime, Utc};
 use std::path::Path;
 use std::fs;
 
+pub fn logger(event: bool, thread_id: std::thread::ThreadId, message: &str) {
+    let _colors = &SETTINGS.colors;
+    if event {
+        println!("{}[CodePulse]{} {}[EVENT]{} {}[{:?}]{} {}", _colors.cyan_green, _colors.endc, _colors.cyan, _colors.endc, _colors.blue, thread_id, _colors.endc, message);
+    } else {
+        println!("{}[CodePulse]{} {}[ERROR]{} {}[{:?}]{} {}", _colors.fail, _colors.endc, _colors.cyan, _colors.endc, _colors.blue, thread_id, _colors.endc, message);
+    }
+}
+
 pub fn check_update(project: &Project, data: &Value) {
-    let colors = &SETTINGS.colors;
+    let _colors = &SETTINGS.colors;
+    let thread_id = std::thread::current().id();
 
     let local_update_str = &project.updated_at;
     let local_update = DateTime::parse_from_rfc3339(local_update_str)
@@ -18,26 +28,25 @@ pub fn check_update(project: &Project, data: &Value) {
             .with_timezone(&Utc);
 
         if github_update > local_update {
-            println!("{}[EVENT]{} {}'s Github is newer, updating...", colors.cyan, colors.endc, project.name);
+            logger(true, thread_id, &format!("{}'s Github is newer, updating...", project.name));
             update_dir(project, true);
         } else {
-            println!("{}[EVENT]{} {}'s local code is up-to-date.", colors.cyan, colors.endc, project.name);
+            logger(true, thread_id, &format!("{}'s local code is up-to-date.", project.name));
         }
     } else {
-        println!("{}Could not find or parse GitHub updated_at date.{}", colors.fail, colors.endc);
+        logger(false, thread_id, "Could not find or parse GitHub updated_at date.");
     }
 }
 
 fn update_dir(project: &Project, _should_clone: bool) {
-    let colors = &SETTINGS.colors;
-    println!("{}UpdateDir{}", colors.bold, colors.endc);
-
+    let _colors = &SETTINGS.colors;
     let git_url = "https://github.com/".to_owned() + &project.github_url + ".git";
+    let thread_id = std::thread::current().id();
 
     let dir = &project.path;
 
     if !Path::new(dir).exists() {
-        println!("{}[EVENT]{} Directory does not exist, creating and cloning...", colors.cyan, colors.endc);
+        logger(true, thread_id, &format!("Directory {} does not exist, creating and cloning...", dir));
         fs::create_dir_all(dir).expect("Failed to create directory");
 
         let output = std::process::Command::new("git")
@@ -48,15 +57,13 @@ fn update_dir(project: &Project, _should_clone: bool) {
             .expect("Failed to execute git clone");
 
         if output.status.success() {
-            println!("{}[EVENT]{} Successfully cloned into {}", colors.cyan, colors.endc, dir);
+            logger(true, thread_id, &format!("Successfully cloned into {}", dir));
         } else {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            println!("{}[EVENT]{} Failed to clone: {}", colors.fail, colors.endc, stderr);
+            logger(false, thread_id, &format!("Failed to clone: {}", stderr));
             return;
         }
     }
-
-    println!("{}[EVENT]{} Updating {}...", colors.cyan, colors.endc, dir);
 
     let output = std::process::Command::new("git")
         .arg("pull")
@@ -65,9 +72,9 @@ fn update_dir(project: &Project, _should_clone: bool) {
         .expect("Failed to execute git pull");
 
     if output.status.success() {
-        println!("{}[EVENT]{} Successfully updated {}", colors.cyan, colors.endc, dir);
+        logger(true, thread_id, &format!("Successfully updated {}", dir));
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        println!("{}[EVENT]{} Failed to update {}: {}", colors.fail, colors.endc, dir, stderr);
+        logger(false, thread_id, &format!("Failed to update {}: {}", dir, stderr));
     }
 }
