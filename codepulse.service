@@ -1,5 +1,5 @@
 [Unit]
-Description=CodePulse is a....
+Description=CodePulse is a Rust tool for real-time synchronization of local repositories with GitHub, ensuring your projects stay updated with the latest changes efficiently.
 After=network.target
 After=network-online.target
 Wants=network-online.target
