@@ -1,3 +1,5 @@
+use crate::settings::SETTINGS;
+
 pub fn logger(event: bool, thread_id: std::thread::ThreadId, message: &str) {
     let _colors = &SETTINGS.colors;
     if event {

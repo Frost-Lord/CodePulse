@@ -3,8 +3,7 @@ use crate::settings::{SETTINGS, Project};
 use chrono::{DateTime, Utc};
 use std::path::Path;
 use std::fs;
-
-mod logs;
+use crate::logs;
 
 pub fn check_update(project: &Project, data: &Value) {
     let _colors = &SETTINGS.colors;

@@ -4,6 +4,7 @@ use tokio;
 
 mod settings;
 mod update;
+mod logs;
 use crate::settings::SETTINGS;
 
 #[tokio::main]
