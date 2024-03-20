@@ -2,11 +2,11 @@ use reqwest;
 use serde_json::Value;
 use tokio;
 use tokio::time::{self, Duration};
+use crate::settings::SETTINGS;
 
 mod settings;
 mod update;
 mod logs;
-use crate::settings::SETTINGS;
 
 fn is_git_installed() -> bool {
     std::process::Command::new("git")
@@ -21,6 +21,8 @@ async fn main() {
         println!("Git is not installed. Please install Git to continue.");
         return;
     }
+
+    logs::log_settings(true, "Settings loaded successfully");
 
     let interval_seconds = SETTINGS.settings.as_ref().unwrap().intivial;
     let mut interval = time::interval(Duration::from_secs(interval_seconds as u64));
