@@ -1,13 +1,13 @@
 {
-    "projects": [
-        {
-            "name": "HaskMate",
-            "path": "./production/HaskMate",
-            "updated_at": "2023-12-08T15:11:52Z",
-            "github_url": "Frost-Lord/HaskMate"
-        }
-    ],
-    "settings": {
-        "intivial": "15"
+  "projects": [
+    {
+      "github_url": "Frost-Lord/HaskMate",
+      "name": "HaskMate",
+      "path": "./production/HaskMate",
+      "updated_at": "2023-12-08T15:13:52Z"
     }
+  ],
+  "settings": {
+    "intivial": "15"
+  }
 }

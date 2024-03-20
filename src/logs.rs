@@ -1,19 +1,21 @@
 use crate::settings::SETTINGS;
 
 pub fn logger(event: bool, thread_id: std::thread::ThreadId, message: &str) {
-    let _colors = &SETTINGS.colors;
+    let settings = SETTINGS.lock().unwrap();
+    let colors = &settings.colors;
     if event {
-        println!("{}[CodePulse]{} {}[EVENT]{} {}[{:?}]{} {}", _colors.cyan_green, _colors.endc, _colors.cyan, _colors.endc, _colors.blue, thread_id, _colors.endc, message);
+        println!("{}[CodePulse]{} {}[EVENT]{} {}[{:?}]{} {}", colors.cyan_green, colors.endc, colors.cyan, colors.endc, colors.blue, thread_id, colors.endc, message);
     } else {
-        println!("{}[CodePulse]{} {}[ERROR]{} {}[{:?}]{} {}", _colors.fail, _colors.endc, _colors.cyan, _colors.endc, _colors.blue, thread_id, _colors.endc, message);
+        println!("{}[CodePulse]{} {}[ERROR]{} {}[{:?}]{} {}", colors.fail, colors.endc, colors.cyan, colors.endc, colors.blue, thread_id, colors.endc, message);
     }
 }
 
 pub fn log_settings(success: bool, message: &str) {
-    let _colors = &SETTINGS.colors;
+    let settings = SETTINGS.lock().unwrap();
+    let colors = &settings.colors;
     if success {
-        println!("{}[CodePulse]{} {}[SETTINGS]{} {}", _colors.cyan_green, _colors.endc, _colors.cyan, _colors.endc, message);
+        println!("{}[CodePulse]{} {}[SETTINGS]{} {}", colors.cyan_green, colors.endc, colors.cyan, colors.endc, message);
     } else {
-        println!("{}[CodePulse]{} {}[ERROR]{} {}", _colors.fail, _colors.endc, _colors.cyan, _colors.endc, message);
+        println!("{}[CodePulse]{} {}[ERROR]{} {}", colors.fail, colors.endc, colors.cyan, colors.endc, message);
     }
 }

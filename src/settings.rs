@@ -1,23 +1,26 @@
 use config::{Config, ConfigError, Environment, File};
 use lazy_static::lazy_static;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::env;
+use std::sync::Mutex;
+use std::fs;
+use serde_json::{Value, json};
 
 lazy_static! {
-    pub static ref SETTINGS: Settings = Settings::new().expect("Failed to setup settings");
+    pub static ref SETTINGS: Mutex<Settings> = Mutex::new(Settings::new().expect("Failed to setup settings"));
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Server {
     pub port: u16,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Logger {
     pub level: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Settings {
     pub environment: String,
     pub server: Server,
@@ -28,7 +31,7 @@ pub struct Settings {
     pub settings: Option<AppCFG>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AppCFG {
     #[serde(default = "default_intivial")]
     pub intivial: u64,
@@ -38,7 +41,7 @@ fn default_intivial() -> u64 {
     15
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Project {
     pub name: String,
     pub path: String,
@@ -46,7 +49,7 @@ pub struct Project {
     pub github_url: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)] 
 pub struct BColors {
     pub header: String,
     pub blue: String,
@@ -78,4 +81,26 @@ impl Settings {
 
         Ok(settings)
     }
+}
+
+pub fn update_project_updated_at(project_name: String, new_updated_at: String) {
+    let file_path = "config.json";
+    let config_content = fs::read_to_string(file_path)
+        .expect("Failed to read config file");
+
+    let mut config_json: Value = serde_json::from_str(&config_content)
+        .expect("Failed to parse config content as JSON");
+
+    if let Some(projects) = config_json["projects"].as_array_mut() {
+        for project in projects.iter_mut() {
+            if project["name"] == project_name {
+                project["updated_at"] = json!(new_updated_at);
+            }
+        }
+    }
+
+    let serialized_settings = serde_json::to_string_pretty(&config_json)
+        .expect("Failed to serialize updated settings");
+    fs::write(file_path, serialized_settings.as_bytes())
+        .expect("Failed to write updated settings to config file");
 }
