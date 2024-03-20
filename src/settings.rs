@@ -24,6 +24,18 @@ pub struct Settings {
     pub logger: Logger,
     pub projects: Vec<Project>,
     pub colors: BColors,
+    #[serde(default)]
+    pub settings: Option<AppCFG>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct AppCFG {
+    #[serde(default = "default_intivial")]
+    pub intivial: u64,
+}
+
+fn default_intivial() -> u64 {
+    15
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -58,6 +70,12 @@ impl Settings {
         s.merge(File::with_name("config/local").required(false))?;
         s.merge(Environment::with_prefix("app").separator("__"))?;
 
-        s.try_into()
+        let settings: Settings = s.try_into()?;
+
+        if settings.projects.is_empty() {
+            return Err(ConfigError::Message("At least one project is required".to_string()));
+        }
+
+        Ok(settings)
     }
 }

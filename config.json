@@ -6,5 +6,8 @@
             "updated_at": "2023-12-08T15:11:52Z",
             "github_url": "Frost-Lord/HaskMate"
         }
-    ]
+    ],
+    "settings": {
+        "intivial": "15"
+    }
 }

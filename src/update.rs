@@ -17,7 +17,7 @@ pub fn check_update(project: &Project, data: &Value) {
     if let Some(github_update_str) = data["updated_at"].as_str() {
         let github_update = DateTime::parse_from_rfc3339(github_update_str)
             .expect("Failed to parse GitHub updated_at date")
-            .with_timezone(&Utc);g
+            .with_timezone(&Utc);
 
         if github_update > local_update {
             logs::logger(true, thread_id, &format!("{}'s Github is newer, updating...", project.name));
